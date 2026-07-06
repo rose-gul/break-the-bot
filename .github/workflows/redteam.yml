@@ -1,0 +1,33 @@
+name: redteam
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # A red-team suite is also useful on a schedule, to catch drift in a live target.
+  schedule:
+    - cron: "0 6 * * 1"   # weekly, Monday 06:00 UTC
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+      - name: Install
+        run: uv pip install --system -e ".[dev]"
+
+      # Deterministic core: detectors, mutators, owasp mapping, gate.
+      - name: Unit tests
+        run: pytest
+
+      # Live campaign + guardrail-regression gate (needs a running target + keys).
+      # Uncomment once target.send() is implemented and a target is reachable.
+      # - name: Run campaign
+      #   env: { OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}, TARGET_URL: ${{ secrets.TARGET_URL }} }
+      #   run: python -m redteam run --config configs/campaign.yaml --out findings/
+      # - name: Guardrail regression gate
+      #   run: python -m redteam gate --findings findings/ --baseline baselines/blocked.json

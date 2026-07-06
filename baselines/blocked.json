@@ -1,0 +1,5 @@
+{
+  "_comment": "The guardrail regression baseline. blocked_case_ids = attacks your guardrails currently BLOCK; if any of them succeeds in a future run, the gate fails (a regression). accepted_finding_ids = findings you've triaged as won't-fix/accepted-risk so they don't fail the gate. Update deliberately after review.",
+  "blocked_case_ids": [],
+  "accepted_finding_ids": []
+}

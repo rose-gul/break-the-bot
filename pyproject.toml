@@ -1,0 +1,43 @@
+[project]
+name = "break-the-bot"
+version = "0.1.0"
+description = "An automated LLM red-team framework with OWASP-mapped vulnerability reports."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+
+dependencies = [
+    "pydantic>=2.7",
+    "pyyaml>=6.0",
+    "httpx>=0.27",          # call the target app / model APIs
+    "jinja2>=3.1",          # report templating
+    "typer>=0.12",          # CLI
+    "rich>=13.7",
+]
+
+[project.optional-dependencies]
+# Real engagements layer these in; the framework works without them.
+tools = [
+    "garak>=0.9",           # NVIDIA model-layer vulnerability scanner
+    "promptfoo",            # (installed via npm normally; listed for reference)
+]
+dev = ["pytest>=8.2", "ruff>=0.5", "mypy>=1.10"]
+
+[project.scripts]
+redteam = "redteam.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/redteam"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["src"]
+testpaths = ["tests"]
